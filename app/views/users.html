@@ -1,0 +1,9 @@
+<div class="container">
+  <div class="input-group">
+    <input type="text" class="form-control" placeholder="Search" ng-model="searchString">
+    <span class="input-group-btn">
+      <button class="btn btn-default" type="button" ng-click="searchUsers(searchString, currentPage, pageSize)" ng-disabled="!searchString">Go!</button>
+    </span>
+  </div>
+  <div ui-grid="gridOptions2" ui-grid-pagination ui-grid-selection class="grid"></div>
+</div>

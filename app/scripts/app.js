@@ -10,19 +10,19 @@
  */
 angular
   .module('angularFoghornApp', [
-    'ngRoute'
+    'ngRoute', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection'
   ])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl',
-        controllerAs: 'main'
+        templateUrl: 'views/users.html',
+        controller: 'UsersCtrl',
+        controllerAs: 'users'
       })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl',
-        controllerAs: 'about'
+      .when('/details/:login', {
+        templateUrl: 'views/userDetails.html',
+        controller: 'UserDetailsCtrl',
+        controllerAs: 'details'
       })
       .otherwise({
         redirectTo: '/'

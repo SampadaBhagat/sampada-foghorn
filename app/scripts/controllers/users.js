@@ -20,7 +20,7 @@ angular.module('angularFoghornApp')
     $scope.searchString = '';
     $scope.pageSize = 10;
     $scope.currentPage = 1;
-    $scope.gridOptions2 = {
+    $scope.gridOptions = {
       paginationPageSize: 10,
       enableRowSelection: true,
       totalItems: 100,
@@ -29,7 +29,7 @@ angular.module('angularFoghornApp')
       enableRowHeaderSelection: false,
       multiSelect: false,
       columnDefs: [
-        { name: 'login', enableColumnMenu: false }
+        { name: 'login', enableColumnMenu: false, displayName: 'User Login' }
       ],
       onRegisterApi: function (gridApi) {
         $scope.gridApi = gridApi;
@@ -58,9 +58,9 @@ angular.module('angularFoghornApp')
                   parseLinks(data.headers('Link'));
                 }
                 if ($scope.searchString) {
-                  $scope.gridOptions2.data = data.data.items;
+                  $scope.gridOptions.data = data.data.items;
                 } else {
-                  $scope.gridOptions2.data = data.data;
+                  $scope.gridOptions.data = data.data;
                 }
               });
           });
@@ -91,8 +91,8 @@ angular.module('angularFoghornApp')
           if (data.headers('Link')) {
             parseLinks(data.headers('Link'));
           }
-          $scope.gridOptions2.data = data.data.items;
-          $scope.gridOptions2.totalItems = data.data.total_count;
+          $scope.gridOptions.data = data.data.items;
+          $scope.gridOptions.totalItems = data.data.total_count;
         });
     };
     /**
@@ -110,9 +110,9 @@ angular.module('angularFoghornApp')
           if (data.headers('Link')) {
             parseLinks(data.headers('Link'));
           }
-          $scope.gridOptions2.data = data.data;
+          $scope.gridOptions.data = data.data;
           if (data.data.total_count) {
-            $scope.gridOptions2.totalItems = data.data.total_count;
+            $scope.gridOptions.totalItems = data.data.total_count;
           }
         });
     }

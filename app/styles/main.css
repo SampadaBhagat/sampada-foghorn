@@ -44,5 +44,22 @@ body {
     margin-bottom: 30px;
   }
 }
-.ui-grid-row:nth-child(odd):hover .ui-grid-cell{cursor: pointer}
-.ui-grid-row:nth-child(even):hover .ui-grid-cell{cursor: pointer}
+.ui-grid-row:nth-child(odd):hover .ui-grid-cell{
+  cursor: pointer
+}
+.ui-grid-row:nth-child(even):hover .ui-grid-cell{
+  cursor: pointer
+}
+.ui-grid-pager-row-count-picker {
+  display: none;
+}
+.watermark {
+    position: absolute;
+    top: 50%;                   
+    transform: translateY(-50%); 
+    opacity: 0.25;
+    font-size: 3em;
+    width: 100%;
+    text-align: center;
+    z-index: 1000;
+}

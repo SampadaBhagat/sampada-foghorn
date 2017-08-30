@@ -50,24 +50,32 @@ angular.module('angularFoghornApp')
                 url = paginationLinks.last;
               }
             }
-            console.log(url + "  --- " + newPage);
             $scope.currentPage = newPage;
             $scope.pageSize = pageSize;
             $http.get(url)
               .then(function (data) {
-                parseLinks(data.headers('Link'));
+                if(data.headers('Link')){
+                  parseLinks(data.headers('Link'));
+                }
                 $scope.gridOptions2.data = data.data;
               });
           });
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-          $location.path('/details/'+row.entity.login );
+          $location.path('/details/' + row.entity.login);
         });
       }
     };
-
-    // $scope.gridOptions2.onRegisterApi = function (gridApi) {
-    //   $scope.gridApi2 = gridApi;
-    // }
+    /**
+     * @ngdoc function
+     * @name UsersCtrl:searchUsers
+     * @param {string} searchString - String to search users in GitHub API
+     * @param {number} pageNumber - Current page number for pagination
+     * @param {number} pageSize - Page size for pagination
+     * @returns {void}
+     * @description
+     * # searchUsers
+     * Function to make a call to git api based on the searched text
+     */
     $scope.searchUsers = function (searchString, pageNumber, pageSize) {
       if (!pageNumber) {
         pageNumber = 1;
@@ -76,34 +84,57 @@ angular.module('angularFoghornApp')
 
       $http.get("https://api.github.com/search/users", { params: { q: searchString, page: pageNumber, per_page: pageSize } })
         .then(function (data) {
-          parseLinks(data.headers('Link'));
+          if(data.headers('Link')){
+            parseLinks(data.headers('Link'));
+          }
           $scope.gridOptions2.data = data.data.items;
           $scope.gridOptions2.totalItems = data.data.total_count;
         });
     };
+    /**
+     * @ngdoc function
+     * @name UsersCtrl:loadUsers
+     * @returns {void}
+     * @description
+     * # loadUsers
+     * Function to get git users without search string on page load
+     */
     function loadUsers() {
+      $scope.currentPage = 1;
       $http.get("https://api.github.com/users", { params: { page: $scope.currentPage, per_page: $scope.pageSize } })
         .then(function (data) {
-          parseLinks(data.headers('Link'));
+          if(data.headers('Link')){
+            parseLinks(data.headers('Link'));
+          }
           $scope.gridOptions2.data = data.data;
-          $scope.gridOptions2.totalItems = data.data.total_count;
+          if(data.data.total_count){
+            $scope.gridOptions2.totalItems = data.data.total_count;
+          }          
         });
     }
-    loadUsers();
+    /**
+     * @ngdoc function
+     * @name UsersCtrl:parseLinks
+     * @returns {void}
+     * @description
+     * # parseLinks
+     * Function to get extract the pagination links from the git api response header - link
+     */
     function parseLinks(response) {
       var linksArray = response.split(DELIM_LINKS);
-      for (var link of linksArray) {
-        let segments = link.split(DELIM_LINK_PARAM);
+      for (var i = 0; i < linksArray.length; i++) {
+        var link = linksArray[i];
+        var segments = link.split(DELIM_LINK_PARAM);
         if (segments.length < 2)
           continue;
 
-        let linkPart = segments[0].trim();
+        var linkPart = segments[0].trim();
         if (!linkPart.startsWith("<") || !linkPart.endsWith(">"))
           continue;
-        linkPart = linkPart.substring(1, linkPart.length - 1);
+        linkPart = linkPart.substring(1, linkPart.length - 1).replace(/{/g, "").replace(/}/g, "");
 
-        for (let i = 1; i < segments.length; i++) {
-          let rel = segments[i].trim().split("=");
+        for (var j = 1; j < segments.length; j++) {
+          var rel = segments[j].trim().split("=");
           if (rel.length < 2 || !(META_REL === rel[0]))
             continue;
 
@@ -119,7 +150,16 @@ angular.module('angularFoghornApp')
             paginationLinks.next = linkPart;
           else if (META_PREV === relValue)
             paginationLinks.prev = linkPart;
+
+          console.log(JSON.stringify(paginationLinks));
         }
       }
     }
+    $scope.$watch('searchString', function(){
+      if($scope.searchString.trim().length > 0) {
+        $scope.searchUsers($scope.searchString, $scope.currentPage, $scope.pageSize);
+      } else {
+        loadUsers();
+      }
+    });
   }]);

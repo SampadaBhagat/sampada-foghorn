@@ -20,6 +20,14 @@ angular.module('angularFoghornApp')
         }
       )
     }
+    /**
+     * @ngdoc function
+     * @name UserDetailsCtrl:submitData
+     * @returns {void}
+     * @description
+     * # submitData
+     * Function to store the form data to gist
+     */
     $scope.submitData = function () {
       var data = {
         "description": $scope.description,
@@ -33,23 +41,37 @@ angular.module('angularFoghornApp')
       $http.post('https://api.github.com/gists', data).then(
         function (response) {
           sessionStorage[$scope.login] = response.data.id;
-          console.log('response' + JSON.stringify(response));
           alert("Data Stored Successfully!!!")
           $location.path('/users');
         }
       );
     }
+    /**
+     * @ngdoc function
+     * @name UserDetailsCtrl:cancel
+     * @returns {void}
+     * @description
+     * # cancel
+     * Function to go back to the users list page
+     */
     $scope.cancel = function () {
       if ($window.confirm('Any changes made in this page will not be saved. Do you want to cancel?')) {
         $location.path('/users');
       }
       
     }
+    /**
+     * @ngdoc function
+     * @name UserDetailsCtrl:reset
+     * @returns {void}
+     * @description
+     * # reset
+     * Function to go reset form data
+     */
     $scope.reset = function () {
       if ($window.confirm('Do you want to reset?')) {
         $scope.description = "";
         $scope.content = "";
       }
-
     }
   }]);

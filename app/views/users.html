@@ -1,6 +1,7 @@
 <div class="container">
   <div class="input-group">
-    <input type="text" class="form-control" placeholder="Search" ng-model="searchString">
+    <input type="text" class="form-control" placeholder="Search" 
+    ng-model="searchString" ng-model-options="{debounce: 300}">
     <span class="input-group-btn">
       <button class="btn btn-default" type="button" ng-click="searchUsers(searchString, currentPage, pageSize)" ng-disabled="!searchString">Go!</button>
     </span>

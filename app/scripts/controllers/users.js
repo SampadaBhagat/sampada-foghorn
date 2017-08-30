@@ -11,11 +11,11 @@ angular.module('angularFoghornApp')
   .controller('UsersCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
     var DELIM_LINKS = ',';
     var DELIM_LINK_PARAM = ';';
-    var META_REL = "rel";
-    var META_LAST = "last";
-    var META_NEXT = "next";
-    var META_FIRST = "first";
-    var META_PREV = "prev";
+    var META_REL = 'rel';
+    var META_LAST = 'last';
+    var META_NEXT = 'next';
+    var META_FIRST = 'first';
+    var META_PREV = 'prev';
     var paginationLinks = {};
     $scope.searchString = '';
     $scope.pageSize = 10;
@@ -38,7 +38,7 @@ angular.module('angularFoghornApp')
           function (newPage, pageSize) {
             console.log(newPage);
             var diff = $scope.currentPage - newPage;
-            var url = "";
+            var url = '';
             if (newPage === 1) {
               url = paginationLinks.first;
             } else {
@@ -54,10 +54,14 @@ angular.module('angularFoghornApp')
             $scope.pageSize = pageSize;
             $http.get(url)
               .then(function (data) {
-                if(data.headers('Link')){
+                if (data.headers('Link')) {
                   parseLinks(data.headers('Link'));
                 }
-                $scope.gridOptions2.data = data.data;
+                if ($scope.searchString) {
+                  $scope.gridOptions2.data = data.data.items;
+                } else {
+                  $scope.gridOptions2.data = data.data;
+                }
               });
           });
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
@@ -82,9 +86,9 @@ angular.module('angularFoghornApp')
         $scope.currentPage = 1;
       }
 
-      $http.get("https://api.github.com/search/users", { params: { q: searchString, page: pageNumber, per_page: pageSize } })
+      $http.get('https://api.github.com/search/users', { params: { q: searchString, page: pageNumber, per_page: pageSize } })
         .then(function (data) {
-          if(data.headers('Link')){
+          if (data.headers('Link')) {
             parseLinks(data.headers('Link'));
           }
           $scope.gridOptions2.data = data.data.items;
@@ -101,15 +105,15 @@ angular.module('angularFoghornApp')
      */
     function loadUsers() {
       $scope.currentPage = 1;
-      $http.get("https://api.github.com/users", { params: { page: $scope.currentPage, per_page: $scope.pageSize } })
+      $http.get('https://api.github.com/users', { params: { page: $scope.currentPage, per_page: $scope.pageSize } })
         .then(function (data) {
-          if(data.headers('Link')){
+          if (data.headers('Link')) {
             parseLinks(data.headers('Link'));
           }
           $scope.gridOptions2.data = data.data;
-          if(data.data.total_count){
+          if (data.data.total_count) {
             $scope.gridOptions2.totalItems = data.data.total_count;
-          }          
+          }
         });
     }
     /**
@@ -125,38 +129,41 @@ angular.module('angularFoghornApp')
       for (var i = 0; i < linksArray.length; i++) {
         var link = linksArray[i];
         var segments = link.split(DELIM_LINK_PARAM);
-        if (segments.length < 2)
+        if (segments.length < 2) {
           continue;
-
+        }
         var linkPart = segments[0].trim();
-        if (!linkPart.startsWith("<") || !linkPart.endsWith(">"))
+        if (!linkPart.startsWith('<') || !linkPart.endsWith('>')) {
           continue;
-        linkPart = linkPart.substring(1, linkPart.length - 1).replace(/{/g, "").replace(/}/g, "");
+        }
+
+        linkPart = linkPart.substring(1, linkPart.length - 1).replace(/{/g, '').replace(/}/g, '');
 
         for (var j = 1; j < segments.length; j++) {
-          var rel = segments[j].trim().split("=");
-          if (rel.length < 2 || !(META_REL === rel[0]))
+          var rel = segments[j].trim().split('=');
+          if (rel.length < 2 || META_REL !== rel[0]) {
             continue;
-
+          }
           var relValue = rel[1];
-          if (relValue.startsWith("\"") && relValue.endsWith("\""))
+          if (relValue.startsWith('\"') && relValue.endsWith('\"')) {
             relValue = relValue.substring(1, relValue.length - 1);
+          }
 
-          if (META_FIRST === relValue)
+          if (META_FIRST === relValue) {
             paginationLinks.first = linkPart;
-          else if (META_LAST === relValue)
+          } else if (META_LAST === relValue) {
             paginationLinks.last = linkPart;
-          else if (META_NEXT === relValue)
+          } else if (META_NEXT === relValue) {
             paginationLinks.next = linkPart;
-          else if (META_PREV === relValue)
+          } else if (META_PREV === relValue) {
             paginationLinks.prev = linkPart;
-
+          }
           console.log(JSON.stringify(paginationLinks));
         }
       }
     }
-    $scope.$watch('searchString', function(){
-      if($scope.searchString.trim().length > 0) {
+    $scope.$watch('searchString', function () {
+      if ($scope.searchString.trim().length > 0) {
         $scope.searchUsers($scope.searchString, $scope.currentPage, $scope.pageSize);
       } else {
         loadUsers();

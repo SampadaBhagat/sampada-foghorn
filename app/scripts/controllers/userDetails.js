@@ -16,9 +16,9 @@ angular.module('angularFoghornApp')
         function (response) {
           sessionStorage[$scope.login] = response.data.id;
           $scope.description = response.data.description;
-          $scope.content = response.data.files["file1.txt"].content;
+          $scope.content = response.data.files['file1.txt'].content;
         }
-      )
+      );
     }
     /**
      * @ngdoc function
@@ -30,22 +30,22 @@ angular.module('angularFoghornApp')
      */
     $scope.submitData = function () {
       var data = {
-        "description": $scope.description,
-        "public": true,
-        "files": {
-          "file1.txt": {
-            "content": $scope.content
+        'description': $scope.description,
+        'public': true,
+        'files': {
+          'file1.txt': {
+            'content': $scope.content
           }
         }
-      }
+      };
       $http.post('https://api.github.com/gists', data).then(
         function (response) {
           sessionStorage[$scope.login] = response.data.id;
-          alert("Data Stored Successfully!!!")
+          $window.alert('Data Stored Successfully!!!');
           $location.path('/users');
         }
       );
-    }
+    };
     /**
      * @ngdoc function
      * @name UserDetailsCtrl:cancel
@@ -58,8 +58,7 @@ angular.module('angularFoghornApp')
       if ($window.confirm('Any changes made in this page will not be saved. Do you want to cancel?')) {
         $location.path('/users');
       }
-      
-    }
+    };
     /**
      * @ngdoc function
      * @name UserDetailsCtrl:reset
@@ -70,8 +69,8 @@ angular.module('angularFoghornApp')
      */
     $scope.reset = function () {
       if ($window.confirm('Do you want to reset?')) {
-        $scope.description = "";
-        $scope.content = "";
+        $scope.description = '';
+        $scope.content = '';
       }
-    }
+    };
   }]);

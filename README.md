@@ -16,15 +16,15 @@ Download the code using git or download the zip file.
 Install node.js and npm (This code is built using node - 6.11.1 and npm - 3.10.10)
 Install PhantomJS.
 
-Run ```sh npm install ```
+Run ```npm install ```
 
-Run ```sh bower install ```
+Run ```bower install ```
 
 ## Usage
 
 Use the grunt command 
 
-```sh grunt serve ```
+```grunt serve ```
 
 to preview the code.
 

@@ -32,3 +32,4 @@ to preview the code.
 
 Running `grunt test` will run the unit tests with karma.
 If you face issues of phantomJS make sure phantomJS is installed on machine.
+
